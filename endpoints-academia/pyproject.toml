@@ -1,0 +1,11 @@
+[project]
+name = "endpoints-academia"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.165.0",
+    "sqlalchemy>=2.1.9",
+    "uvicorn>=0.54.0",
+]
