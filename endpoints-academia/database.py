@@ -14,6 +14,7 @@ class Usuario(Base):
     senha= Column("senha", String, nullable=True)
     telefone= Column("telefone", Integer)
     sexo= Column("sexo", String)
+    foto= Column("foto", String)
 
 
     "matricula" = relationship(
@@ -29,12 +30,13 @@ class Usuario(Base):
     )
 
 
-    def __init__(self, nome, email, senha, sexo, telefone = None):
+    def __init__(self, nome, email, senha, sexo, telefone = None, foto = None):
         self.nome = nome
         self.email = email
         self.senha = senha
         self.telefone = telefone
         self.sexo = sexo
+        self.foto = foto
 
 
 class Instrutor(Base):
