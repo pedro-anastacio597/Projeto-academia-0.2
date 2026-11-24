@@ -53,7 +53,7 @@ def VerificarTokenUsuario(token: str = Depends(oauth2_usuario), session = Depend
 
     return user
 
-def VerificarTokenInstrutor(token: str = Depends(oauth2_usuario), session = Depends(sessao)):
+def VerificarTokenInstrutor(token: str = Depends(oauth2_instrutor), session = Depends(sessao)):
     try:
         dictinfo = jwt.decode(token, SECRET_KEY, ALGORITHM)
         id_usuario = int(dictinfo.get("sub"))
@@ -67,3 +67,23 @@ def VerificarTokenInstrutor(token: str = Depends(oauth2_usuario), session = Depe
 
 
     return instructor
+
+def VerificarTokenUsuarioOuInstrutor(token: str = Depends(oauth2_usuario), session = Depends(sessao)):
+    try: 
+        dictinfo = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+
+        id_usuario = int(dictinfo.get("sub"))
+    except (JWTError, TypeError, ValueError):
+        raise HTTPException(status_code=401, detail="Acesso negado!")
+
+    user = session.query(Usuario).filter(Usuario.id == id_usuario)
+
+    if user:
+        return user
+
+    instructor = session.query(Instrutor).filter(Instrutor.id == id_usuario)
+
+    if instructor:
+        return instructor
+
+    raise HTTPException(status_code=404, detail="Usuario ou instrutor não encontrado!")

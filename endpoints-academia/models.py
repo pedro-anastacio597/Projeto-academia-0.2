@@ -13,6 +13,7 @@ class InstrutorEntrada(BaseModel):
     email: EmailStr
     senha: str
     telefone: int
+    administrador: bool
 
 class ExercicioEntrada(BaseModel):
     nome: str
@@ -44,7 +45,13 @@ class MatriculaEntrada(BaseModel):
 
 class AlterarPerfil(BaseModel):
     nome: str | None = None
+    email: EmailStr | None = None
     senha: str | None = None
     telefone: str | None = None
     sexo: str | None = None
     foto: str | None = None
+
+class AlterarTreino(BaseModel):
+    nome: str | None = None
+    objetivo: str | None = None
+    descricao: str | None = None

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, Integer, ForeignKey, Date, Float
+from sqlalchemy import create_engine, Column, String, Integer, ForeignKey, Date, Float, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 
 db = create_engine("sqlite:///banco.db")
@@ -48,17 +48,19 @@ class Instrutor(Base):
     email = Column("email", String, nullable=True, unique=True)
     senha= Column("senha", String, nullable=True)
     telefone= Column("telefone", String, nullable=True)
+    administrador = Column("administrador", Boolean, nullable= True)
 
     alteracao_treino = relationship(
         "Alteracao_Treino",
         back_populates="instrutor"
     )
 
-    def __init__(self, nome, email, senha, telefone = None):
+    def __init__(self, nome, email, senha, telefone = None, administrador = False):
             self.nome = nome
             self.email = email
             self.senha = senha
             self.telefone = telefone
+            self.administrador = administrador
 
 class Treino(Base):
     __tablename__ = "treino"
