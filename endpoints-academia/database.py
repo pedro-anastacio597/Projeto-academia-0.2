@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine, Column, String, Integer, ForeignKey, Date, Boolean
+from sqlalchemy import create_engine, Column, String, Integer, ForeignKey, Date, Float
 from sqlalchemy.orm import declarative_base, relationship
 
-db= create_engine("sqlite:///banco.db")
+db = create_engine("sqlite:///banco.db")
+
 Base = declarative_base()
 
 
@@ -12,19 +13,19 @@ class Usuario(Base):
     nome = Column("nome", String, nullable=True)
     email = Column("email", String, nullable=True, unique=True)
     senha= Column("senha", String, nullable=True)
-    telefone= Column("telefone", Integer)
+    telefone= Column("telefone", String)
     sexo= Column("sexo", String)
     foto= Column("foto", String)
 
 
-    "matricula" = relationship(
-        "matricula",
+    matricula = relationship(
+        "Matricula",
         back_populates= "usuario",
         cascade= "all"
     )
 
-    "treino_aluno" = relationship(
-        "treino_aluno",
+    treino_usuario = relationship(
+        "Treino_Usuario",
         back_populates= "usuario",
         cascade= "all"
     )
@@ -40,16 +41,16 @@ class Usuario(Base):
 
 
 class Instrutor(Base):
-    _tablename__ = "instrutor"
+    __tablename__ = "instrutor"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     nome = Column("nome", String, nullable=True)
     email = Column("email", String, nullable=True, unique=True)
     senha= Column("senha", String, nullable=True)
-    Telefone= Column("telefone", Integer, nullable=True)
+    telefone= Column("telefone", String, nullable=True)
 
-    "alteracao_treino" = relationship(
-        "alteracao_treino",
+    alteracao_treino = relationship(
+        "Alteracao_Treino",
         back_populates="instrutor"
     )
 
@@ -67,20 +68,20 @@ class Treino(Base):
     objetivo = Column("objetivo", String)
     descricao = Column("descricao", String)
 
-    "treino_exercicio" = relationship(
-        "treino_exercicio",
+    treino_exercicio = relationship(
+        "Treino_Exercicio",
         back_populates= "treino",
         cascade= "all"
     )
 
-    "treino_usuario" = relationship(
-        "treino_usuario",
+    treino_usuario = relationship(
+        "Treino_Usuario",
         back_populates= "treino",
         cascade= "all"
     )
 
-    "alteracao_treino" = relationship(
-        "alteracao_treino",
+    alteracao_treino = relationship(
+        "Alteracao_Treino",
         back_populates="treino",
         cascade= "all"
     )
@@ -91,7 +92,7 @@ class Treino(Base):
          self.descricao = descricao
 
 
-class Exercico(Base):
+class Exercicio(Base):
     __tablename__ = "exercicio"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
@@ -101,13 +102,13 @@ class Exercico(Base):
     video = Column("video", String)
 
     series = relationship(
-        "series",
+        "Series",
         cascade= "all",
         back_populates= "exercicio"
     )
 
-    "treino_exercicio" = relationship(
-        "treino_exercicio",
+    treino_exercicio = relationship(
+        "Treino_Exercicio",
         back_populates= "exercicio",
         cascade= "all"
     )
@@ -119,15 +120,15 @@ class Exercico(Base):
         self.video = video
 
 class Series(Base):
-    __tablename__ = "sereis"
+    __tablename__ = "series"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     numero = Column("numero", Integer, nullable=True)
-    peso = Column("peso", float, default= 0)
+    peso = Column("peso", Float, default= 0)
     id_exercicio = Column("id_exercicio", Integer, ForeignKey("exercicio.id"))
 
     exercicio = relationship(
-        "exercicio",
+        "Exercicio",
         back_populates= "series"
     )
 
@@ -136,12 +137,12 @@ class Plano(Base):
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     nome = Column("nome", String, nullable=True)
-    valor = Column("valor", float, nullable=True)
+    valor = Column("valor", Float, nullable=True)
     descricao = Column("descricao", String, nullable=True)
     duracao = Column("duracao", String, nullable=True)
 
-    "matricula" = relationship(
-        "matricula",
+    matricula = relationship(
+        "Matricula",
         back_populates= "plano"
     )
 
@@ -163,14 +164,19 @@ class Matricula(Base):
     data_vencimento = Column("data_vencimento", Date, nullable=True)
     data_pagamento = Column("data_pagamento", Date, default= None)
 
-    "usuario" = relationship(
-        "usuario",
+    usuario = relationship(
+        "Usuario",
         back_populates= "matricula"
+    )
+
+    plano = relationship(
+        "Plano",
+        back_populates="matricula"
     )
 
     def __init__(self, id_usuario, id_plano, data_inicio, data_vencimento, status = "ativo", ):
         self.id_usuario = id_usuario
-        self.id_palno = id_plano
+        self.id_plano = id_plano
         self.data_inicio = data_inicio
         self.data_vencimento = data_vencimento
         self.status = status
@@ -182,13 +188,13 @@ class Treino_Exercicio(Base):
     id_treino = Column("id_treino", Integer, ForeignKey("treino.id"), nullable=True)
     id_exercicio = Column("id_exercicio", Integer, ForeignKey("exercicio.id"), nullable=True)
 
-    "treino" = relationship(
-        "treino",
+    treino = relationship(
+        "Treino",
         back_populates= "treino_exercicio"
     )
 
-    "exercicio" = relationship(
-        "exercicio",
+    exercicio = relationship(
+        "Exercicio",
         back_populates= "treino_exercicio"
     )
 
@@ -196,20 +202,20 @@ class Treino_Exercicio(Base):
         self.id_treino = id_treino
         self.id_exercicio = id_exercicio
 
-class Treino_usuario(Base):
-    __tablename__ = "treino_exercicio"
+class Treino_Usuario(Base):
+    __tablename__ = "treino_usuario"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     id_treino = Column("id_treino", Integer, ForeignKey("treino.id"), nullable=True)
     id_usuario = Column("id_usuario", Integer, ForeignKey("usuario.id"), nullable=True)
 
-    "exercicio" = relationship(
-        "exercicio",
+    treino = relationship(
+        "Treino",
         back_populates= "treino_usuario"
     )
 
-    "usuario" = relationship(
-        "usuario",
+    usuario = relationship(
+        "Usuario",
         back_populates= "treino_usuario"
     )
 
@@ -217,7 +223,7 @@ class Treino_usuario(Base):
         self.id_treino = id_treino
         self.id_usuario = id_usuario 
 
-class Alteracao_treino (Base):
+class Alteracao_Treino (Base):
     __tablename__ = "alteracao_treino"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
@@ -225,16 +231,19 @@ class Alteracao_treino (Base):
     id_instrutor = Column("id_instrutor", Integer, ForeignKey("instrutor.id"), nullable=True)
     data_alteracao = Column("data_alteracao", Date, nullable=True,)
 
-    "instrutor" = relationship(
-        "instrutor",
+    instrutor = relationship(
+        "Instrutor",
         back_populates= "alteracao_treino"
     )
 
-    "treino" = relationship(
-            "treino",
+    treino = relationship(
+            "Treino",
             back_populates= "alteracao_treino"
         )
 
     def __init__(self, id_treino, id_instrutor):
         self.id_treino = id_treino
         self.id_instrutor = id_instrutor
+
+
+Base.metadata.create_all(bind=db)

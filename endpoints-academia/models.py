@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, dataclasses
+from pydantic import BaseModel, EmailStr
 
 class UsuarioEntrada(BaseModel):
     nome: str
@@ -30,7 +30,21 @@ class TreinoEntrada(BaseModel):
     objetivo: str
     descricao: str
 
+class PlanoEntrada(BaseModel):
+    nome: str
+    valor: float
+    descricao: str
+    duracao: int
+
 class MatriculaEntrada(BaseModel):
     id_usuario: int
     id_plano: int
     status: str
+
+
+class AlterarPerfil(BaseModel):
+    nome: str | None = None
+    senha: str | None = None
+    telefone: str | None = None
+    sexo: str | None = None
+    foto: str | None = None

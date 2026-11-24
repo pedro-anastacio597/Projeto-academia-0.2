@@ -16,10 +16,10 @@ def sessao():
     finally:
         session.close()
 
-def CriarAcessToken(id_usuario):
-    dataexpericao = datetime.now(timezone.utc -3) + timedelta(minutes= ACESS_TOKEN_EXPIREM)
+def CriarAccessToken(id_usuario):
+    dataexpericao = datetime.now(timezone.utc) + timedelta(minutes= ACESS_TOKEN_EXPIREM)
     dicinfo={
-        "sub" : id_usuario,
+        "sub" : str(id_usuario),
         "exp": dataexpericao
     }
     tokenaccess = jwt.encode(dicinfo, SECRET_KEY, ALGORITHM)
@@ -27,9 +27,9 @@ def CriarAcessToken(id_usuario):
     return tokenaccess
 
 def CriarRefreshToken(id_usuario):
-    dataexpericao = datetime.now(timezone.utc -3) + relativedelta(months= 3)
+    dataexpericao = datetime.now(timezone.utc) + relativedelta(months= 3)
     dictinfo={
-        "sub" : id_usuario,
+        "sub" : str(id_usuario),
         "exp": dataexpericao
     }
     tokenrefresh = jwt.encode(dictinfo, SECRET_KEY, ALGORITHM)
@@ -40,9 +40,10 @@ def CriarRefreshToken(id_usuario):
 
 def VerificarTokenUsuario(token: str = Depends(oauth2_usuario), session = Depends(sessao)):
     try:
-        dictinfo = jwt.decode(token, SECRET_KEY, ALGORITHM)
-        id_usuario = dictinfo.get("sub")
-    except JWTError:
+        dictinfo = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        id_usuario = int(dictinfo.get("sub"))
+    except JWTError as erro:
+        print("ERRO NA VALIDAÇÃO DO TOKEN:", repr(erro))
         raise HTTPException(status_code=401, detail="Acesso negado!")
 
     user= session.query(Usuario).filter(Usuario.id == id_usuario).first()
@@ -52,14 +53,14 @@ def VerificarTokenUsuario(token: str = Depends(oauth2_usuario), session = Depend
 
     return user
 
-def VerificarTokenUsuario(token: str = Depends(oauth2_usuario), session = Depends(sessao)):
+def VerificarTokenInstrutor(token: str = Depends(oauth2_usuario), session = Depends(sessao)):
     try:
         dictinfo = jwt.decode(token, SECRET_KEY, ALGORITHM)
-        id_usuario = dictinfo.get("sub")
+        id_usuario = int(dictinfo.get("sub"))
     except JWTError:
         raise HTTPException(status_code=401, detail="Acesso negado!")
 
-    instructor= session.query(Usuario).filter(Usuario.id == id_usuario).first()
+    instructor= session.query(Instrutor).filter(Instrutor.id == id_usuario).first()
 
     if not instructor:
         raise HTTPException(status_code=404, detail=("Instrutor não encontrado"))
