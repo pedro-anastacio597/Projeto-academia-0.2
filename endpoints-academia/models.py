@@ -42,7 +42,6 @@ class MatriculaEntrada(BaseModel):
     id_plano: int
     status: str
 
-
 class AlterarPerfil(BaseModel):
     nome: str | None = None
     email: EmailStr | None = None
@@ -55,3 +54,8 @@ class AlterarTreino(BaseModel):
     nome: str | None = None
     objetivo: str | None = None
     descricao: str | None = None
+
+class AltrarMatricula(BaseModel):
+    id_plano: int | None = None
+    datavencimento: str | None
+    

@@ -30,6 +30,12 @@ class Usuario(Base):
         cascade= "all"
     )
 
+    avaliacaofisica = relationship(
+        "AvaliacaoFisica",
+        back_populates= "usuario",
+        cascade= all
+    )
+
 
     def __init__(self, nome, email, senha, sexo, telefone = None, foto = None):
         self.nome = nome
@@ -182,6 +188,49 @@ class Matricula(Base):
         self.data_inicio = data_inicio
         self.data_vencimento = data_vencimento
         self.status = status
+
+class AvalaicaoFisica(Base):
+    __tablename__ = "avaliacaofisica"
+
+    id = Column("id", Integer, primary_key=True, autoincrement=True)
+    resumo = Column("resumo", String)
+    peso = Column("peso", Float, nullable=True)
+    gorduracorporal = Column("gorduracorporal", Float, nullable=True)
+    imc = Column("imc", Float, nullable= True)
+    fcrepouso = Column("fceposuo", Integer, nullable=True)
+    bracoesquerdo = Column("bracoesquerdo", Float, default= "--")
+    bracodireito = Column("bracodireito", Float, default="--")
+    cintura = Column("cintura", Float, default="--")
+    abdomen = Column("abdomen", Float, default="--")
+    quadril = Column("quadril", Float, default="--")
+    coxaesquerda = Column("coxaesquerda", Float, default="--")
+    coxadireita = Column("coxadireita", Float, default="--")
+    panturrilhaesquerda = Column("panturrilhaesquerda", Float, default="--")
+    panturrilhadireita = Column("panturrilhadireita", Float, default="--")
+    id_usuario = Column("id_usuario", Integer, ForeignKey("usuario.id"), nullable= True)
+
+    usuario = relationship(
+        "Usuario",
+        back_populates="avaliacaofisica"
+    )
+
+    def __init__(self, resumo, peso, gorduracorporal, imc, fcrepouso, bracoesquerdo, bracodireito, cintura, abdomen, quadril, coxaesquerda, coxadireita, panturrilhaesquerda, panturrilhadireita, id_usuario):
+        self.resumo = resumo
+        self.peso = peso
+        self.gorduracorporal = gorduracorporal
+        self.imc = imc
+        self.fcrepouso = fcrepouso
+        self.bracoesquerdo = bracoesquerdo
+        self.bracodireito = bracodireito
+        self.cintura = cintura
+        self.abdomen = abdomen
+        self.quadril = quadril
+        self.coxaesquerda = coxaesquerda
+        self.coxadireita = coxadireita
+        self.panturrilhaesquerda = panturrilhaesquerda
+        self.panturrilhadireita = panturrilhadireita
+        self.id_usuario = id_usuario
+
 
 class Treino_Exercicio(Base):
     __tablename__ = "treino_exercicio"

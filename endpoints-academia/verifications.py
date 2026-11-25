@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from database import Instrutor, Usuario, Treino, Exercicio, Treino_Exercicio
+from database import Instrutor, Usuario, Treino, Exercicio, Treino_Exercicio, Matricula
 
 def VerificarExcluir(id: int, instrutor: Instrutor | None = None, user: Usuario | None = None):
     if instrutor:
@@ -29,3 +29,8 @@ def VerificarTreinoExercicio(id_treino, id_exercicio, session):
     treinoexercicio = session.query(Treino_Exercicio).filter(Treino_Exercicio.id == id_treino, Treino_Exercicio.id == id_exercicio)
 
     return treinoexercicio
+
+def VerificarMatricula(id, session):
+    matricula = session.query(Matricula).filter(Matricula.id == id)
+
+    return matricula

@@ -4,6 +4,7 @@ from database import Usuario
 from models import UsuarioEntrada, AlterarPerfil
 from config import bcrypt_context
 from fastapi.security import OAuth2PasswordRequestForm
+from verifications import VerificarExcluir
 
 user_router = APIRouter(tags=["user"])
 
@@ -74,7 +75,8 @@ async def EditarPerfil(dados: AlterarPerfil, senhaautual: str | None = None, use
     return user
 
 @user_router.delete("/usuario/{id}/deletarperfil", status_code=200)
-async def excluirusuario(id: int, user: Usuario= Depends(VerificarTokenUsuario), session = Depends(sessao)):
+async def ExcluirUsuario(id: int, user: Usuario= Depends(VerificarTokenUsuario), session = Depends(sessao)):
+
     if user.id != id:
         raise HTTPException(404, "Não é possível realizar a ação!")
 
